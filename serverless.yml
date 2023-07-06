@@ -1,0 +1,71 @@
+service: email-engagement-metrics-update
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: eu-west-2
+  stage: prod
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: 
+            - 's3:*'
+            - 'ses:*'
+            - 'cloudwatch:*'
+            - 'logs:*'
+            - 'lambda:*'
+          Resource: '*'
+
+resources:
+  Resources:
+    EmailEngagementMetricsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${opt:stage}-velaris-email-vdm-metrics-bucket
+
+functions:
+  lambda:
+    handler: lambda_function.run
+    events:
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "no-reply@velaris.io"}'
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "ifeelonline.com"}'
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "bothive.be"}'
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "figures.hr"}'
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "padmagnanapriya.live"}'
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "ecoonline.com"}'
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "test.com"}'
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "blueprintlearning.dk"}'
+      - schedule: 
+          rate: cron(0 0 * * ? *)
+          enabled: true
+          input: '{"email_identity": "scenarios.tester@velaris.io"}'
+    environment:
+      S3_BUCKET_NAME:
+        Ref: EmailEngagementMetricsBucket
